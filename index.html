@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>لاكاسا برجر | المنيو الرسمي</title>
+<meta name="description" content="لاكاسا برجر - الفلوجة، شارع الثرثار. اطلب بيتزا، برجر، صاج، ريزو وأكثر عبر الواتساب مباشرة.">
+<meta name="theme-color" content="#141014">
+<link rel="icon" href="assets/images/logo.png" type="image/png">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="assets/images/logo.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="La Casa Burger">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ===================== HERO ===================== -->
+<header class="hero" id="top">
+  <div class="hero-bg" id="heroBg" aria-hidden="true"></div>
+  <div class="hero-noise" aria-hidden="true"></div>
+
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="logo-badge reveal r1">
+        <img id="logoImg" src="assets/images/logo.png" alt="شعار لاكاسا برجر" width="88" height="88">
+      </div>
+
+      <h1 class="hero-title reveal r2" id="restName">لاكاسا برجر</h1>
+      <p class="hero-tagline reveal r3">نكهة بيتٍ دافئ… بروح مدينة</p>
+
+      <p class="hero-address reveal r4" id="restAddress">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21s7-6.1 7-11.5A7 7 0 0 0 5 9.5C5 14.9 12 21 12 21Z" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="9.5" r="2.2" stroke="currentColor" stroke-width="1.6"/></svg>
+        <span>الانبار - الفلوجة - شارع الثرثار</span>
+      </p>
+
+      <div class="hero-meta reveal r5">
+        <button class="status-pill" id="statusBtn" type="button" aria-haspopup="dialog">
+          <span class="status-dot" id="statusDot"></span>
+          <span id="statusText">جاري التحقق…</span>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <span class="hours-pill" id="restHours">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <span>يومياً 10 صباحاً – 3 فجراً</span>
+        </span>
+      </div>
+
+      <div class="hero-actions reveal r6">
+        <a class="pill pill-call" id="callBtn" href="tel:">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 3h3l2 5-2 1a11 11 0 0 0 6 6l1-2 5 2v3a2 2 0 0 1-2 2C10.5 20 4 13.5 4 5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.5"/></svg>
+          <span id="phoneText" dir="ltr">964+7811100884</span>
+        </a>
+        <a class="pill pill-map" id="mapBtn" href="#" target="_blank" rel="noopener">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21s7-6.1 7-11.5A7 7 0 0 0 5 9.5C5 14.9 12 21 12 21Z" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="9.5" r="2.3" stroke="currentColor" stroke-width="1.5"/></svg>
+          <span>الموقع</span>
+        </a>
+      </div>
+
+      <a href="#menuSections" class="btn-hero-cta reveal r7" id="browseMenuBtn">
+        تصفّح المنيو
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+
+    <div class="hero-media reveal r4" aria-hidden="true">
+      <div class="hero-media-glow"></div>
+      <img src="assets/images/burger.png" alt="" class="hero-food-img" width="560" height="540" loading="eager">
+    </div>
+  </div>
+</header>
+
+<!-- ===================== SEARCH ===================== -->
+<div class="search-wrap">
+  <div class="search-box">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="m20 20-3.2-3.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <input type="search" id="searchInput" placeholder="ابحث عن طبقك المفضل..." aria-label="بحث في المنيو">
+    <button class="search-clear" id="searchClear" type="button" aria-label="مسح البحث" hidden>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ===================== CATEGORIES ===================== -->
+<nav class="categories" id="categories" aria-label="تصنيفات المنيو">
+  <!-- تُبنى ديناميكياً من menu.json -->
+</nav>
+
+<!-- ===================== PRODUCTS ===================== -->
+<main class="menu-sections" id="menuSections">
+  <!-- تُبنى ديناميكياً من menu.json -->
+</main>
+
+<div class="empty-state" id="emptyState" hidden>
+  <svg width="52" height="52" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.4"/><path d="m20 20-3.2-3.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+  <p>لا توجد نتائج مطابقة لبحثك</p>
+</div>
+
+<!-- ===================== FLOATING CART BUTTON ===================== -->
+<button class="cart-fab" id="cartFab" aria-label="فتح السلة" hidden>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 4h2l2.4 12.2a2 2 0 0 0 2 1.8h7.6a2 2 0 0 0 2-1.6L21 8H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="20" r="1.4" fill="currentColor"/><circle cx="18" cy="20" r="1.4" fill="currentColor"/></svg>
+  <span class="cart-fab-count" id="cartFabCount">0</span>
+  <span class="cart-fab-total" id="cartFabTotal">0 د.ع</span>
+</button>
+
+<!-- ===================== OVERLAY ===================== -->
+<div class="overlay" id="overlay"></div>
+
+<!-- ===================== STATUS BOTTOM SHEET ===================== -->
+<section class="sheet sheet-compact" id="statusSheet" role="dialog" aria-modal="true" aria-labelledby="statusSheetTitle">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <button class="icon-btn close-btn" id="statusSheetClose" aria-label="إغلاق">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <h2 id="statusSheetTitle">حالة المطعم</h2>
+  </div>
+  <div class="sheet-body">
+    <div class="status-detail">
+      <span class="status-dot lg" id="statusDotLarge"></span>
+      <div>
+        <p class="status-detail-text" id="statusDetailText">جاري التحقق…</p>
+        <p class="status-detail-sub" id="statusDetailSub"></p>
+      </div>
+    </div>
+    <div class="status-hours-card">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <span id="statusHoursLabel">يومياً من 10:00 صباحاً حتى 3:00 فجراً</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PRODUCT BOTTOM SHEET ===================== -->
+<section class="sheet" id="productSheet" role="dialog" aria-modal="true" aria-labelledby="productSheetTitle">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <button class="icon-btn close-btn" id="productSheetClose" aria-label="إغلاق">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <h2 id="productSheetTitle">اسم المنتج</h2>
+  </div>
+
+  <div class="sheet-body" id="productSheetBody">
+    <div class="sheet-product-image">
+      <img id="productSheetImg" src="" alt="">
+    </div>
+
+    <div class="options-block" id="optionsBlock" hidden>
+      <h3 class="options-title" id="optionsTitle">الحجم</h3>
+      <div class="options-list" id="optionsList"></div>
+    </div>
+
+    <div class="options-block">
+      <h3 class="options-title">ملاحظات على هذا الطبق</h3>
+      <textarea id="productNote" rows="2" placeholder="مثال: بدون بصل"></textarea>
+    </div>
+  </div>
+
+  <div class="sheet-footer">
+    <button class="btn-add" id="confirmAddBtn">إضافة <span id="confirmAddPrice">0 د.ع</span></button>
+    <div class="qty-stepper">
+      <button class="qty-btn" id="qtyPlus" aria-label="زيادة الكمية">+</button>
+      <span class="qty-value" id="qtyValue">1</span>
+      <button class="qty-btn" id="qtyMinus" aria-label="إنقاص الكمية">−</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CART BOTTOM SHEET ===================== -->
+<section class="sheet sheet-tall" id="cartSheet" role="dialog" aria-modal="true" aria-labelledby="cartSheetTitle">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <button class="icon-btn close-btn" id="cartSheetClose" aria-label="إغلاق">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <h2 id="cartSheetTitle">السلة</h2>
+  </div>
+
+  <div class="sheet-body" id="cartItems">
+    <!-- عناصر السلة -->
+  </div>
+
+  <div class="cart-total-row">
+    <span>المجموع الإجمالي</span>
+    <span id="cartTotalValue">0 د.ع</span>
+  </div>
+
+  <div class="closed-banner" id="closedBanner" hidden>
+    المطعم مغلق حالياً — يمكنك تجهيز طلبك وسيصلنا فور فتح المطعم.
+  </div>
+
+  <div class="checkout-form" id="checkoutForm">
+    <h3 class="options-title">الطلب لـ</h3>
+    <input type="text" id="custName" placeholder="اسمك" autocomplete="name">
+    <input type="tel" id="custPhone" placeholder="رقم الهاتف (11 رقم)" autocomplete="tel" inputmode="numeric" maxlength="11" pattern="[0-9]{11}" dir="ltr">
+    <span class="field-hint" id="phoneHint" hidden>يرجى إدخال رقم هاتف صحيح مكوّن من 11 رقم</span>
+    <input type="text" id="custAddress" placeholder="أقرب نقطة دالّة" autocomplete="street-address">
+    <textarea id="custNote" rows="2" placeholder="عندك ملاحظة؟"></textarea>
+  </div>
+
+  <div class="sheet-footer single">
+    <button class="btn-add full" id="sendOrderBtn">إرسال الطلب عبر واتساب 😊</button>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="site-footer">
+  <p>
+    جميع الحقوق محفوظة لدى
+    <a class="brand-link" href="https://instagram.com/alwathiqservices" target="_blank" rel="noopener">AlwathiqServices</a>
+  </p>
+</footer>
+
+<!-- ===================== TOAST ===================== -->
+<div class="toast" id="toast"></div>
+
+<script src="config.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
