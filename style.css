@@ -37,7 +37,36 @@
 }
 
 *,*::before,*::after{ box-sizing: border-box; }
-html{ scroll-behavior: smooth; }
+html{
+  scroll-behavior: smooth;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* ==========================================================
+   سلوك اللمس أقرب إلى تطبيق (بدون كسر التمرير أو السحب)
+   ========================================================== */
+
+/* يمنع تكبير النقر المزدوج (double-tap zoom) على كل عنصر تفاعلي،
+   مع إبقاء التمرير العمودي/الأفقي طبيعياً داخل كل عنصر. */
+button, a, input, select, .cat-pill, .product-card, .btn-add, .btn-pill-add,
+.qty-btn, .icon-btn, .pill, .status-pill, .sound-toggle, .dish-arrow, .dish-dot,
+.dish-autoplay-toggle, .cart-fab, .search-clear, .inline-stepper button,
+.cart-item-stepper button, .option-row, .btn-hero-cta{
+  touch-action: manipulation;
+}
+
+/* حاويات السحب/التمرير الأفقي: تُبقي الاتجاه المقصود فقط دون تكبير بالإصبعين */
+.categories{ touch-action: pan-x; }
+.dish-stage{ touch-action: pan-y; }
+.sheet-body{ touch-action: pan-y; }
+
+/* في وضع "مثبّت على الشاشة الرئيسية" (standalone/PWA) فقط:
+   نمنع تقريب الصفحة بالإصبعين على المستوى العام، دون التأثير على
+   العناصر أعلاه التي حدّدت سلوكها الخاص (سحب الكاروسيل، تمرير النوافذ...). */
+html.is-standalone{
+  touch-action: pan-x pan-y;
+}
 
 [hidden]{ display: none !important; }
 
@@ -48,6 +77,12 @@ body{
   color: var(--ivory);
   -webkit-tap-highlight-color: transparent;
   padding-bottom: 90px;
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  width: 100%;
+  overflow-x: hidden;
+  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 img{ max-width: 100%; display:block; }
@@ -65,7 +100,7 @@ a{ color: inherit; }
 .hero{
   position: relative;
   overflow: hidden;
-  padding: 22px 20px 22px;
+  padding: calc(22px + env(safe-area-inset-top)) 20px 22px;
   background:
     radial-gradient(120% 90% at 100% 0%, rgba(226,36,31,0.20) 0%, rgba(226,36,31,0) 55%),
     radial-gradient(90% 70% at 0% 100%, rgba(226,36,31,0.12) 0%, rgba(226,36,31,0) 60%),
@@ -336,7 +371,7 @@ a{ color: inherit; }
 .search-box svg{ color: var(--muted); flex-shrink:0; }
 .search-box input{
   border:none; background:transparent; outline:none;
-  width: 100%; font-size: 14.5px; color: var(--ivory);
+  width: 100%; font-size: 16px; color: var(--ivory);
   text-align: right;
 }
 .search-box input::placeholder{ color: var(--muted); }
@@ -352,7 +387,7 @@ a{ color: inherit; }
    CATEGORIES
    ========================================================== */
 .categories{
-  position: sticky; top: 0; z-index: 20;
+  position: sticky; top: env(safe-area-inset-top); z-index: 20;
   display:flex; gap:10px;
   overflow-x: auto;
   padding: 14px 16px;
@@ -628,7 +663,7 @@ textarea, .checkout-form input{
   background: var(--bg-700);
   border-radius: var(--radius-control);
   padding: 13px 14px;
-  font-size:14px;
+  font-size:16px;
   color: var(--ivory);
   outline:none;
   resize:none;

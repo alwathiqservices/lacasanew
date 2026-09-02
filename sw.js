@@ -3,7 +3,7 @@
  * يخزّن هيكل الصفحة الأساسي مؤقتاً (Cache First) لتجربة أسرع
  * عند العودة للموقع، دون أي منطق شبكي إضافي أو خادم خلفي.
  */
-const CACHE_NAME = "lacasanew-shell-v2";
+const CACHE_NAME = "lacasa-shell-v2";
 const CORE_ASSETS = [
   "./",
   "./index.html",

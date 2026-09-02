@@ -20,6 +20,23 @@
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   /* ---------------------------------------------------------
+     كشف وضع "مثبّت على الشاشة الرئيسية" (Standalone/PWA)
+     يُستخدم فقط لمنع تقريب الإصبعين في هذا الوضع تحديداً (عبر CSS)
+     دون التأثير على التصفح العادي بالمتصفح.
+     --------------------------------------------------------- */
+  function applyStandaloneMode(){
+    const isStandalone =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      window.navigator.standalone === true; // دعم قديم لـ iOS Safari
+    document.documentElement.classList.toggle("is-standalone", isStandalone);
+  }
+  applyStandaloneMode();
+  const standaloneQuery = window.matchMedia("(display-mode: standalone)");
+  if(standaloneQuery.addEventListener){
+    standaloneQuery.addEventListener("change", applyStandaloneMode);
+  }
+
+  /* ---------------------------------------------------------
      عناصر DOM
      --------------------------------------------------------- */
   const el = (id) => document.getElementById(id);
@@ -1111,6 +1128,19 @@
     searchClear.hidden = true;
     renderProducts();
     searchInput.focus();
+  });
+
+  /* ---------------------------------------------------------
+     إبقاء الحقل المُركَّز ظاهراً فوق لوحة المفاتيح داخل النوافذ،
+     وإعادة الترتيب الطبيعي تلقائياً بعد إغلاقها (لا حاجة لأي تنظيف
+     يدوي لأننا لا نغيّر أي تخطيط ثابت، فقط نُمرِّر العنصر للأعلى).
+     --------------------------------------------------------- */
+  document.querySelectorAll(".sheet input, .sheet textarea").forEach(field=>{
+    field.addEventListener("focus", ()=>{
+      setTimeout(()=>{
+        field.scrollIntoView({ block: "center", behavior: prefersReducedMotion ? "auto" : "smooth" });
+      }, 300); // تأخير بسيط لانتظار ظهور لوحة المفاتيح قبل التمرير
+    });
   });
 
   /* ---------------------------------------------------------
