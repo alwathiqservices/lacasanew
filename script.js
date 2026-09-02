@@ -140,7 +140,7 @@
   function playAddSound(){
     if(soundMuted) return;
     const now = performance.now();
-    if(now - lastSoundAt < 90) return; // منع تراكم الأصوات عند الإضافات السريعة جداً
+    if(now - lastSoundAt < 220) return; // منع تراكم الأصوات عند الإضافات السريعة جداً
     lastSoundAt = now;
 
     const ctx = getAudioCtx();
@@ -149,28 +149,35 @@
       if(ctx.state === "suspended") ctx.resume().catch(()=>{});
 
       const t0 = ctx.currentTime;
-      const duration = 0.11; // ~110ms
 
-      const osc = ctx.createOscillator();
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(760, t0);
-      osc.frequency.exponentialRampToValueAtTime(520, t0 + duration);
+      // نغمتان صاعدتان (Ding-Ding) تعطيان إحساس اكتمال واضح وممتع، مع بقائهما قصيرتين وناعمتين
+      const notes = [
+        { start: 0,     freq: 587.33, dur: 0.10, peak: 0.065 }, // D5
+        { start: 0.075, freq: 880.00, dur: 0.15, peak: 0.075 }, // A5
+      ];
 
       const filter = ctx.createBiquadFilter();
       filter.type = "lowpass";
-      filter.frequency.value = 1800;
+      filter.frequency.value = 2400;
+      filter.connect(ctx.destination);
 
-      const gain = ctx.createGain();
-      gain.gain.setValueAtTime(0.0001, t0);
-      gain.gain.exponentialRampToValueAtTime(0.06, t0 + 0.015); // دخول تدريجي ناعم، مستوى منخفض جداً
-      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + duration);
+      notes.forEach(n=>{
+        const noteStart = t0 + n.start;
+        const osc = ctx.createOscillator();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(n.freq, noteStart);
 
-      osc.connect(filter);
-      filter.connect(gain);
-      gain.connect(ctx.destination);
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.0001, noteStart);
+        gain.gain.exponentialRampToValueAtTime(n.peak, noteStart + 0.012); // دخول ناعم وسريع
+        gain.gain.exponentialRampToValueAtTime(0.0001, noteStart + n.dur); // خروج تدريجي دون طقطقة
 
-      osc.start(t0);
-      osc.stop(t0 + duration + 0.02);
+        osc.connect(gain);
+        gain.connect(filter);
+
+        osc.start(noteStart);
+        osc.stop(noteStart + n.dur + 0.02);
+      });
     }catch(e){ /* تعذر تشغيل الصوت لا يجب أن يوقف الإضافة أو يظهر خطأ */ }
   }
 
