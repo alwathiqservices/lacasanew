@@ -71,6 +71,16 @@
   const statusDetailSub  = el("statusDetailSub");
   const statusHoursLabel = el("statusHoursLabel");
 
+  const soundToggle      = el("soundToggle");
+
+  const dishCarousel     = el("dishCarousel");
+  const dishStage        = el("dishStage");
+  const dishPrev         = el("dishPrev");
+  const dishNext         = el("dishNext");
+  const dishName         = el("dishName");
+  const dishDots         = el("dishDots");
+  const dishAutoplayToggle = el("dishAutoplayToggle");
+
   /* ---------------------------------------------------------
      أدوات مساعدة
      --------------------------------------------------------- */
@@ -92,6 +102,95 @@
     return /^[0-9]{11}$/.test((v||"").trim());
   }
 
+  /* ---------------------------------------------------------
+     صوت التأكيد الناعم عند نجاح الإضافة (Web Audio API)
+     — قصير جداً، خفيف، بدون ملف خارجي، بدون تراكم.
+     --------------------------------------------------------- */
+  const SOUND_PREF_KEY = "lacasa_sound_muted";
+  let soundMuted = false;
+  try{
+    const saved = localStorage.getItem(SOUND_PREF_KEY);
+    soundMuted = saved === "1";
+  }catch(e){ soundMuted = false; }
+
+  let audioCtx = null;
+  let lastSoundAt = 0;
+
+  function getAudioCtx(){
+    if(audioCtx) return audioCtx;
+    try{
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if(!Ctx) return null;
+      audioCtx = new Ctx();
+    }catch(e){ audioCtx = null; }
+    return audioCtx;
+  }
+
+  // يُستدعى داخل أول تفاعل من المستخدم لتهيئة/استئناف الصوت وفق سياسات المتصفح
+  function primeAudio(){
+    const ctx = getAudioCtx();
+    if(ctx && ctx.state === "suspended"){
+      ctx.resume().catch(()=>{ /* تجاهل بصمت */ });
+    }
+  }
+  ["pointerdown", "touchstart", "keydown"].forEach(evt=>{
+    window.addEventListener(evt, primeAudio, { once: true, passive: true });
+  });
+
+  function playAddSound(){
+    if(soundMuted) return;
+    const now = performance.now();
+    if(now - lastSoundAt < 90) return; // منع تراكم الأصوات عند الإضافات السريعة جداً
+    lastSoundAt = now;
+
+    const ctx = getAudioCtx();
+    if(!ctx) return;
+    try{
+      if(ctx.state === "suspended") ctx.resume().catch(()=>{});
+
+      const t0 = ctx.currentTime;
+      const duration = 0.11; // ~110ms
+
+      const osc = ctx.createOscillator();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(760, t0);
+      osc.frequency.exponentialRampToValueAtTime(520, t0 + duration);
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = "lowpass";
+      filter.frequency.value = 1800;
+
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.0001, t0);
+      gain.gain.exponentialRampToValueAtTime(0.06, t0 + 0.015); // دخول تدريجي ناعم، مستوى منخفض جداً
+      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + duration);
+
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(t0);
+      osc.stop(t0 + duration + 0.02);
+    }catch(e){ /* تعذر تشغيل الصوت لا يجب أن يوقف الإضافة أو يظهر خطأ */ }
+  }
+
+  function applySoundToggleUI(){
+    soundToggle.setAttribute("aria-pressed", String(!soundMuted));
+    soundToggle.classList.toggle("is-muted", soundMuted);
+    soundToggle.querySelector(".icon-on").hidden = soundMuted;
+    soundToggle.querySelector(".icon-off").hidden = !soundMuted;
+    soundToggle.setAttribute("aria-label", soundMuted ? "تفعيل صوت الإضافة" : "كتم صوت الإضافة");
+  }
+
+  soundToggle.addEventListener("click", ()=>{
+    soundMuted = !soundMuted;
+    try{ localStorage.setItem(SOUND_PREF_KEY, soundMuted ? "1" : "0"); }catch(e){ /* ignore */ }
+    applySoundToggleUI();
+    if(!soundMuted) primeAudio();
+  });
+  applySoundToggleUI();
+
+
   function saveCart(){
     try{ localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(cart)); }catch(e){ /* ignore quota errors */ }
   }
@@ -112,17 +211,15 @@
     applyRestaurantInfo();
     renderCategories();
     renderProducts();
+    initCarousel();
   }
 
   function applyRestaurantInfo(){
     const r = MENU.restaurant;
     el("restName").textContent = r.name;
-    el("restAddress").querySelector("span").textContent = r.address;
+    el("restAddress").textContent = r.address;
     el("logoImg").src = r.logo;
     el("logoImg").alt = "شعار " + r.name;
-
-    const heroImg = document.querySelector(".hero-food-img");
-    if(heroImg) heroImg.alt = r.name + " - صنف مميز من المنيو";
 
     document.title = r.name + " | المنيو الرسمي";
 
@@ -231,6 +328,240 @@
     openSheet(statusSheet);
   });
   el("statusSheetClose").addEventListener("click", ()=> closeSheet(statusSheet));
+
+  /* ---------------------------------------------------------
+     عرض الأكلات السينمائي (3D Carousel) — بيانات حقيقية من menu.json
+     --------------------------------------------------------- */
+  const CAROUSEL_CATEGORY_PICKS = ["burger", "pizza", "kentucky", "saj", "rizo", "western"];
+  let carouselSlides = [];
+  let carouselIndex = 0;
+  let carouselTimer = null;
+  let carouselAnimating = false;
+  let carouselAutoplayEnabled = true;
+  let carouselVisible = true;
+
+  function buildCarouselSlides(){
+    const slides = [];
+    CAROUSEL_CATEGORY_PICKS.forEach(catId=>{
+      const product = MENU.products.find(p=> p.category === catId);
+      if(product) slides.push(product);
+    });
+    // احتياط: إن لم تتوفر أي فئة من القائمة أعلاه، استخدم أول 5 منتجات كما وردت في البيانات
+    if(slides.length === 0){
+      MENU.products.slice(0, 5).forEach(p=> slides.push(p));
+    }
+    return slides;
+  }
+
+  function renderCarouselDots(){
+    dishDots.innerHTML = "";
+    carouselSlides.forEach((s, i)=>{
+      const dot = document.createElement("button");
+      dot.type = "button";
+      dot.className = "dish-dot" + (i === carouselIndex ? " active" : "");
+      dot.setAttribute("role", "tab");
+      dot.setAttribute("aria-label", `عرض ${s.name}`);
+      dot.setAttribute("aria-selected", i === carouselIndex ? "true" : "false");
+      dot.addEventListener("click", ()=>{
+        stopCarouselAutoplay();
+        goToSlide(i);
+      });
+      dishDots.appendChild(dot);
+    });
+  }
+
+  function initCarousel(){
+    carouselSlides = buildCarouselSlides();
+    if(carouselSlides.length === 0) return;
+
+    dishStage.innerHTML = "";
+    carouselSlides.forEach((p, i)=>{
+      const item = document.createElement("div");
+      item.className = "dish-slide";
+      item.dataset.index = i;
+      item.innerHTML = `<img src="${p.image}" alt="${p.name}" loading="${i === 0 ? "eager" : "lazy"}" width="220" height="220">`;
+      dishStage.appendChild(item);
+    });
+
+    renderCarouselDots();
+    layoutCarousel();
+    updateDishName();
+
+    if(carouselSlides.length > 1){
+      dishPrev.hidden = false;
+      dishNext.hidden = false;
+      dishDots.hidden = false;
+      dishAutoplayToggle.hidden = prefersReducedMotion;
+      startCarouselAutoplay();
+    } else {
+      dishPrev.hidden = true;
+      dishNext.hidden = true;
+      dishDots.hidden = true;
+      dishAutoplayToggle.hidden = true;
+    }
+  }
+
+  function shortestOffset(from, to, total){
+    let diff = (to - from) % total;
+    if(diff > total / 2) diff -= total;
+    if(diff < -total / 2) diff += total;
+    return diff;
+  }
+
+  function layoutCarousel(){
+    const total = carouselSlides.length;
+    const slideEls = dishStage.querySelectorAll(".dish-slide");
+    slideEls.forEach((el, i)=>{
+      const offset = shortestOffset(carouselIndex, i, total);
+      el.classList.remove("is-active", "is-adjacent", "is-far");
+
+      if(prefersReducedMotion){
+        // تنقّل يدوي بسيط بدون تأثير ثلاثي الأبعاد: يظهر الصنف النشط فقط
+        if(offset === 0){
+          el.classList.add("is-active");
+          el.style.transform = "none";
+          el.style.opacity = "1";
+          el.style.zIndex = "5";
+          el.style.pointerEvents = "auto";
+        } else {
+          el.style.transform = "none";
+          el.style.opacity = "0";
+          el.style.zIndex = "1";
+          el.style.pointerEvents = "none";
+        }
+        return;
+      }
+
+      let tx = 0, scale = 1, rotate = 0, opacity = 1, z = 5, pe = "auto";
+
+      if(offset === 0){
+        el.classList.add("is-active");
+      } else if(Math.abs(offset) === 1){
+        el.classList.add("is-adjacent");
+        tx = offset * -62; // نسبة % من عرض المرحلة
+        scale = 0.8;
+        rotate = offset * 20; // درجات rotateY
+        opacity = 0.55;
+        z = 3;
+        pe = "auto";
+      } else {
+        el.classList.add("is-far");
+        tx = offset * -90;
+        scale = 0.6;
+        rotate = offset * 26;
+        opacity = 0;
+        z = 1;
+        pe = "none";
+      }
+
+      el.style.transform = `translateX(${tx}%) scale(${scale}) rotateY(${rotate}deg)`;
+      el.style.opacity = String(opacity);
+      el.style.zIndex = String(z);
+      el.style.pointerEvents = pe;
+    });
+  }
+
+  function updateDishName(){
+    const current = carouselSlides[carouselIndex];
+    if(current) dishName.textContent = current.name;
+    [...dishDots.children].forEach((dot, i)=>{
+      dot.classList.toggle("active", i === carouselIndex);
+      dot.setAttribute("aria-selected", i === carouselIndex ? "true" : "false");
+    });
+  }
+
+  function goToSlide(index){
+    if(carouselAnimating || carouselSlides.length === 0) return;
+    const total = carouselSlides.length;
+    carouselIndex = ((index % total) + total) % total;
+    carouselAnimating = true;
+    layoutCarousel();
+    updateDishName();
+    const unlockDelay = prefersReducedMotion ? 20 : 720;
+    setTimeout(()=>{ carouselAnimating = false; }, unlockDelay);
+  }
+
+  function nextSlide(){ goToSlide(carouselIndex + 1); }
+  function prevSlide(){ goToSlide(carouselIndex - 1); }
+
+  function startCarouselAutoplay(){
+    if(prefersReducedMotion || !carouselAutoplayEnabled) return;
+    stopCarouselAutoplay();
+    carouselTimer = setInterval(()=>{
+      if(carouselVisible && document.visibilityState === "visible"){
+        nextSlide();
+      }
+    }, 5000);
+  }
+  function stopCarouselAutoplay(){
+    if(carouselTimer){ clearInterval(carouselTimer); carouselTimer = null; }
+  }
+
+  dishPrev.addEventListener("click", ()=>{ stopCarouselAutoplay(); prevSlide(); });
+  dishNext.addEventListener("click", ()=>{ stopCarouselAutoplay(); nextSlide(); });
+
+  dishAutoplayToggle.addEventListener("click", ()=>{
+    carouselAutoplayEnabled = !carouselAutoplayEnabled;
+    dishAutoplayToggle.setAttribute("aria-pressed", String(carouselAutoplayEnabled));
+    dishAutoplayToggle.querySelector(".icon-pause").hidden = !carouselAutoplayEnabled;
+    dishAutoplayToggle.querySelector(".icon-play").hidden = carouselAutoplayEnabled;
+    dishAutoplayToggle.querySelector(".icon-play-label").textContent = carouselAutoplayEnabled ? "إيقاف التقليب التلقائي" : "استئناف التقليب التلقائي";
+    if(carouselAutoplayEnabled) startCarouselAutoplay(); else stopCarouselAutoplay();
+  });
+
+  // إيقاف التشغيل التلقائي عندما تكون المنطقة خارج الشاشة أو التبويب مخفياً
+  if(typeof IntersectionObserver !== "undefined"){
+    const carouselObserver = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{ carouselVisible = entry.isIntersecting; });
+    }, { threshold: 0.2 });
+    carouselObserver.observe(dishCarousel);
+  }
+  document.addEventListener("visibilitychange", ()=>{
+    if(document.visibilityState === "visible" && carouselAutoplayEnabled){
+      startCarouselAutoplay();
+    }
+  });
+
+  // دعم السحب باللمس دون تعطيل التمرير العمودي للصفحة
+  (function enableCarouselSwipe(){
+    let startX = 0, startY = 0, tracking = false, decided = false, isHorizontal = false;
+
+    dishStage.addEventListener("touchstart", (e)=>{
+      if(e.touches.length !== 1) return;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      tracking = true;
+      decided = false;
+      isHorizontal = false;
+    }, { passive: true });
+
+    dishStage.addEventListener("touchmove", (e)=>{
+      if(!tracking) return;
+      const dx = e.touches[0].clientX - startX;
+      const dy = e.touches[0].clientY - startY;
+      if(!decided){
+        if(Math.abs(dx) > 8 || Math.abs(dy) > 8){
+          decided = true;
+          isHorizontal = Math.abs(dx) > Math.abs(dy);
+        }
+      }
+      if(isHorizontal && e.cancelable) e.preventDefault(); // يمنع تمرير الصفحة أفقياً فقط أثناء السحب الأفقي الفعلي
+    }, { passive: false });
+
+    dishStage.addEventListener("touchend", (e)=>{
+      if(!tracking) return;
+      tracking = false;
+      if(!isHorizontal) return;
+      const endX = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0].clientX : startX;
+      const dx = endX - startX;
+      if(Math.abs(dx) < 32) return;
+      stopCarouselAutoplay();
+      // في RTL: سحب لليسار = التالي، سحب لليمين = السابق
+      if(dx < 0) nextSlide(); else prevSlide();
+    });
+  })();
+
+
 
   /* ---------------------------------------------------------
      التصنيفات (Categories)
@@ -423,6 +754,7 @@
       addSimpleItem(p, +1);
       syncInlineStepper(p, card);
       showToast(`تمت إضافة ${p.name} إلى السلة`);
+      playAddSound();
       updateCartFab(true);
     }
   }
@@ -531,6 +863,7 @@
     });
     saveCart();
     showToast(`تمت إضافة ${p.name} إلى السلة`);
+    playAddSound();
     closeSheet(productSheet);
     updateCartFab(true);
     renderProducts(); // لتحديث أي stepper مرتبط بنفس المنتج البسيط

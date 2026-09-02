@@ -25,56 +25,70 @@
   <div class="hero-noise" aria-hidden="true"></div>
 
   <div class="hero-inner">
-    <div class="hero-text">
-      <div class="logo-badge reveal r1">
-        <img id="logoImg" src="assets/images/logo.png" alt="شعار لاكاسا برجر" width="88" height="88">
-      </div>
-
-      <h1 class="hero-title reveal r2" id="restName">لاكاسا برجر</h1>
-      <p class="hero-tagline reveal r3">نكهة بيتٍ دافئ… بروح مدينة</p>
-
-      <p class="hero-address reveal r4" id="restAddress">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21s7-6.1 7-11.5A7 7 0 0 0 5 9.5C5 14.9 12 21 12 21Z" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="9.5" r="2.2" stroke="currentColor" stroke-width="1.6"/></svg>
-        <span>الانبار - الفلوجة - شارع الثرثار</span>
-      </p>
-
-      <div class="hero-meta reveal r5">
-        <button class="status-pill" id="statusBtn" type="button" aria-haspopup="dialog">
-          <span class="status-dot" id="statusDot"></span>
-          <span id="statusText">جاري التحقق…</span>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <span class="hours-pill" id="restHours">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-          <span>يومياً 10 صباحاً – 3 فجراً</span>
-        </span>
-      </div>
-
-      <div class="hero-actions reveal r6">
-        <a class="pill pill-call" id="callBtn" href="tel:">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 3h3l2 5-2 1a11 11 0 0 0 6 6l1-2 5 2v3a2 2 0 0 1-2 2C10.5 20 4 13.5 4 5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.5"/></svg>
-          <span id="phoneText" dir="ltr">964+7811100884</span>
-        </a>
-        <a class="pill pill-map" id="mapBtn" href="#" target="_blank" rel="noopener">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21s7-6.1 7-11.5A7 7 0 0 0 5 9.5C5 14.9 12 21 12 21Z" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="9.5" r="2.3" stroke="currentColor" stroke-width="1.5"/></svg>
-          <span>الموقع</span>
-        </a>
-      </div>
-
-      <a href="#menuSections" class="btn-hero-cta reveal r7" id="browseMenuBtn">
-        تصفّح المنيو
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
+    <div class="logo-badge reveal r1">
+      <img id="logoImg" src="assets/images/logo.png" alt="شعار لاكاسا برجر" width="72" height="72">
     </div>
 
-    <div class="hero-media reveal r4" aria-hidden="true">
-      <div class="hero-media-glow"></div>
-      <img src="assets/images/burger.png" alt="" class="hero-food-img" width="560" height="540" loading="eager">
+    <h1 class="hero-title reveal r2" id="restName">لاكاسا برجر</h1>
+    <p class="hero-tagline reveal r3">نكهة بيتٍ دافئ… بروح مدينة</p>
+
+    <div class="hero-meta reveal r4">
+      <button class="status-pill" id="statusBtn" type="button" aria-haspopup="dialog">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusText">جاري التحقق…</span>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <span class="hours-pill" id="restHours">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <span>يومياً 10 صباحاً – 3 فجراً</span>
+      </span>
+      <button class="sound-toggle" id="soundToggle" type="button" aria-pressed="true" aria-label="كتم صوت الإضافة">
+        <svg class="icon-on" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M16.5 8.5a5 5 0 0 1 0 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <svg class="icon-off" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true" hidden><path d="M4 9v6h4l5 4V5L8 9H4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M16 9.5 21 14.5M21 9.5 16 14.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <!-- ===================== عرض الأكلات السينمائي (Carousel) ===================== -->
+    <div class="dish-carousel reveal r5" id="dishCarousel" role="region" aria-roledescription="carousel" aria-label="أشهى الأصناف">
+      <div class="dish-stage" id="dishStage"><!-- تُبنى ديناميكياً --></div>
+      <button class="dish-arrow dish-arrow-prev" id="dishPrev" type="button" aria-label="الصنف السابق">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="dish-arrow dish-arrow-next" id="dishNext" type="button" aria-label="الصنف التالي">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+
+    <p class="dish-name" id="dishName">…</p>
+    <div class="dish-dots" id="dishDots" role="tablist" aria-label="اختيار الصنف"></div>
+    <button class="dish-autoplay-toggle" id="dishAutoplayToggle" type="button" aria-pressed="true">
+      <svg class="icon-pause" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+      <svg class="icon-play" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" hidden><path d="M8 5v14l11-7L8 5Z"/></svg>
+      <span class="icon-play-label">إيقاف التقليب التلقائي</span>
+    </button>
+
+    <a href="#menuSections" class="btn-hero-cta reveal r6" id="browseMenuBtn">
+      تصفّح المنيو
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+
+    <div class="hero-actions reveal r7">
+      <a class="pill pill-call" id="callBtn" href="tel:">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 3h3l2 5-2 1a11 11 0 0 0 6 6l1-2 5 2v3a2 2 0 0 1-2 2C10.5 20 4 13.5 4 5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.5"/></svg>
+        <span id="phoneText" dir="ltr">964+7811100884</span>
+      </a>
+      <a class="pill pill-map" id="mapBtn" href="#" target="_blank" rel="noopener">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21s7-6.1 7-11.5A7 7 0 0 0 5 9.5C5 14.9 12 21 12 21Z" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="9.5" r="2.3" stroke="currentColor" stroke-width="1.5"/></svg>
+        <span id="restAddress">الفلوجة - شارع الثرثار</span>
+      </a>
     </div>
   </div>
 </header>
 
 <!-- ===================== SEARCH ===================== -->
+<div class="menu-intro">
+  <h2 class="menu-intro-title">اختار اللي تحبّه</h2>
+</div>
 <div class="search-wrap">
   <div class="search-box">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="m20 20-3.2-3.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
