@@ -5,7 +5,7 @@
  * حتى تظهر تحديثات المنيو والأسعار والأقسام مباشرة للزبائن.
  */
 
-const CACHE_NAME = "lacasa-shell-v3";
+const CACHE_NAME = "lacasa-shell-v4";
 
 const CORE_ASSETS = [
   "./",
