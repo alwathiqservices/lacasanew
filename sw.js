@@ -5,7 +5,7 @@
  * حتى تظهر تحديثات المنيو والأسعار والأقسام مباشرة للزبائن.
  */
 
-const CACHE_NAME = "lacasa-shell-v4";
+const CACHE_NAME = "lacasa-shell-v5"; // تم رفع الإصدار لتحديث الكاش فوراً
 
 const CORE_ASSETS = [
   "./",
@@ -61,9 +61,10 @@ self.addEventListener("fetch", (event) => {
 
   /* ---------------------------------
      menu.json
-     دائماً من الإنترنت أولاً
+     دائماً من الإنترنت أولاً وبدون كاش
   --------------------------------- */
-  if (url.pathname.endsWith("/menu.json")) {
+  if (url.pathname.includes("menu.json")) {
+    event.respondusing = true;
     event.respondWith(
       fetch(event.request, {
         cache: "no-store",
