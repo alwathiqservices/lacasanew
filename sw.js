@@ -5,7 +5,7 @@
  * حتى تظهر تحديثات المنيو والأسعار والأقسام مباشرة للزبائن.
  */
 
-const CACHE_NAME = "lacasa-shell-v5"; // تم رفع الإصدار لتحديث الكاش فوراً
+const CACHE_NAME = "lacasa-shell-v6"; // تم رفع الإصدار لتحديث الكاش فوراً
 
 const CORE_ASSETS = [
   "./",
